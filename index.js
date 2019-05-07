@@ -1,5 +1,5 @@
 const cache = require('./cache');
+const { addToEventStore } = require('./process');
 
 cache.getDataset()
-  .then(JSON.stringify)
-  .then(console.log);
+  .then(addToEventStore)
