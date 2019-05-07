@@ -47,9 +47,6 @@ async function getDataset() {
 
   debug(`Extracting ${events.length} events`);
 
-  for ( let i = 0; i < events.length; i++ ) {
-    events[i] = await geocode(events[i]);
-  }
   return events;
 }
 
