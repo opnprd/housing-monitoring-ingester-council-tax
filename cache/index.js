@@ -1,5 +1,10 @@
 const moment = require('moment');
 const Dataset = require('../utils/Dataset');
+const geocode = require('./geocode');
+
+function slice(count) {
+  return data => data.slice(0, count);
+}
 
 function rawFilter(record) {
   return moment(record.band_from, 'DD.MM.YYYY').isAfter('2010-01-01');
@@ -32,11 +37,15 @@ async function getDataset() {
     await data2018.downloadFile();
   }
 
-  const events = await data2018.readFromCache()
+  const rawEvents = await data2018.readFromCache()
     .then(data => data.filter(rawFilter))
 
-  return events
-    .map(eventify)
+  const events = rawEvents.map(eventify);
+
+  for ( let i = 0; i < events.length; i++ ) {
+    events[i] = await geocode(events[i]);
+  }
+  return events;
 }
 
 module.exports = {
