@@ -23,10 +23,12 @@ async function geocodeWithGoogle(address) {
 }
 
 async function geocode(data) {
+  const { ref } = data;
   const address = data.eventData.addr.join(', ');
   let position;
   try {
-    position = await db.get(address)
+    position = await db.get(ref).then(JSON.parse);
+    debug(position);
   } catch(error) {
     if (error.type !== 'NotFoundError') throw error
 
@@ -37,7 +39,7 @@ async function geocode(data) {
     
     // address_encoded, geometry.location
     position = [ geocoded[0].geometry.location.lng, geocoded[0].geometry.location.lat ];
-    db.put(address, position);
+    db.put(ref, JSON.stringify(position));
   }
   return {
     ...data,

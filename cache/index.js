@@ -1,19 +1,19 @@
 const moment = require('moment');
 const Dataset = require('../utils/Dataset');
 const geocode = require('./geocode');
-
-function slice(count) {
-  return data => data.slice(0, count);
-}
+const debug = require('debug')('councilTaxIngester/cache');
 
 function rawFilter(record) {
   return moment(record.band_from, 'DD.MM.YYYY').isAfter('2010-01-01');
 }
 
 function eventify(raw) {
+  const address = [raw.addr1, raw.addr2, raw.addr3, raw.addr4].filter(x => x).join(', ');
+
   return {
     type: 'councilTaxRegistration',
-    ref: raw.property_ref,
+    // ref: raw.property_ref, // There is a problem with ref at the moment
+    ref: address,
     date: moment(raw.band_from, 'DD.MM.YYYY'),
     eventData: {
       band: raw.band,
@@ -40,7 +40,12 @@ async function getDataset() {
   const rawEvents = await data2018.readFromCache()
     .then(data => data.filter(rawFilter))
 
-  const events = rawEvents.map(eventify);
+  debug(`Got ${rawEvents.length} events from the dataset`);
+
+  const events = rawEvents
+    .map(eventify);
+
+  debug(`Extracting ${events.length} events`);
 
   for ( let i = 0; i < events.length; i++ ) {
     events[i] = await geocode(events[i]);
