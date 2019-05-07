@@ -51,6 +51,7 @@ class Dataset {
     const watcher = new Promise((resolve, reject) => {
       const parser = parse({
         columns: true,
+        trim: true,
       }, (err, records) => {
         if (err) {
           reject(err)
