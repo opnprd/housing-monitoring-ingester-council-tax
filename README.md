@@ -22,6 +22,6 @@ node .
 Further debug information can be set by setting the DEBUG environment variable on the command line as follows:
 
 ```shell
-DEBUG=eventstore/* node .
+DEBUG=councilTaxIngester/* node .
 ```
 

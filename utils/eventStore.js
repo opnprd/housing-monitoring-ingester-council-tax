@@ -1,5 +1,5 @@
 const axios = require('axios');
-const debug = require('debug')('leedsPlanning/services/eventStore');
+const debug = require('debug')('councilTaxIngester/services/eventStore');
 
 async function createEvent(eventData) {
   const eventEndpoint = 'http://localhost:8000/events';
